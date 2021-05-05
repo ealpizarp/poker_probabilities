@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <math.h>
+
+int CoeficienteBinomial(int n, int k)
+
+/*
+ * Funcion: Calcula el coeficiente binomial
+ * ----------------------------
+ *  
+ *   n: un número natural 
+ *   k: otro número natural
+ *
+ *   Retorna: El número de formas de escoger k elementos a partir de un conjunto de n elementos
+*/
+
+{
+    // Casos base para el cálculo de coeficiente binomial según su fórmula multiplicativa
+    
+    if(k == 0)return 1;
+    if(n <= k) return 0;
+
+    // Se utiliza la fórmula multiplicativa para calcular por recursión de cola el coeficiente binomial
+
+    return (n*CoeficienteBinomial(n-1,k-1))/k;
+}
+
+
+int main () {
+
+float pRoyalFlush = CoeficienteBinomial(4,1) / (float) CoeficienteBinomial(52,5);
+float pDosPares = (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) / CoeficienteBinomial(52, 5);
+float pFullHouse = (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) / CoeficienteBinomial(52, 5);
+float pQuad = (13 * 12 * 4) / CoeficienteBinomial(52, 5);
+
+printf("La probabilidad de un doble par es de %f\n", pDosPares);
+printf("La probabilidad de un Full House es de %f\n", pFullHouse);
+printf("La probabilidad de un quad es de %f\n", pQuad);
+printf("La probabilidad de un royal flush es de %f\n", pRoyalFlush);
+
+return 0;
+
+}
+
+
