@@ -1,3 +1,16 @@
+/*
+=======================================================================================================================================================================================================
+                                                                            Tecnológico de Costa Rica
+                                                                Proyecto Programado Lenguajes de programacion (IC4700)
+Autores:Eric Alpizar.
+        Jacob Picado.
+        Natalia Vargas.
+        Patrick Vindas.
+
+Fecha de ultima modificación: 08/05/2021.
+=======================================================================================================================================================================================================
+*/
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -8,14 +21,9 @@
 #define NUM_CARTAS_PALO 13
 #define NUM_CARTAS_MANO 5
 #define NUM_PALOS 4
-<<<<<<< HEAD
+//#define N 649739
 #define N 649739
 #define M 40
-=======
-#define N 1
-#define M 1
->>>>>>> 4f19118cde3856dba33e1c4b1910f397c62213a8
-
 
 /*
 Se declara un nuevo tipo llamado carta, los atributos que pueden componener a este mismo estan definidos de la siguiente manera:
@@ -89,11 +97,10 @@ void mezclar_mazo(carta array_cartas[])
 */
 
 {
-    srand(time(NULL));
   
     for (int i=0; i < NUM_CARTAS; i++)
     {
-        int r = i + (rand() % (52 -i));
+        int r = i + (rand() % (NUM_CARTAS -i));
 
         carta temp = array_cartas[i];
         array_cartas[i] = array_cartas[r];
@@ -101,10 +108,31 @@ void mezclar_mazo(carta array_cartas[])
     }
 }
 
-<<<<<<< HEAD
 void mostrar_informacion_general () {
 
-printf("Poker probabilities\n\n");
+/*
+ * Rutina: Imprime en consola la informacion general del programa
+ * --------------------------------------------------
+ * 
+ * Se imprime el nombre de la insitucion para la que se realiza el proyecto asi como
+ * el nombre del proyecto en ASCII Art.
+ *
+*/
+
+printf("============================================================================================\n");
+printf("                             Instituto tecnologico de Costa Rica                            \n");
+printf("============================================================================================\n\n");
+
+
+
+
+
+printf("  ____       _                               _           _     _ _ _ _   _           \n");
+printf(" |  _ \\ ___ | | _____ _ __   _ __  _ __ ___ | |__   __ _| |__ (_) (_) |_(_) ___  ___ \n");
+printf(" | |_) / _ \\| |/ / _ \\ '__| | '_ \\| '__/ _ \\| '_ \\ / _` | '_ \\| | | | __| |/ _ \\/ __|\n");
+printf(" |  __/ (_) |   <  __/ |    | |_) | | | (_) | |_) | (_| | |_) | | | | |_| |  __/\\__ \\\n");
+printf(" |_|   \\___/|_|\\_\\___|_|    | .__/|_|  \\___/|_.__/ \\__,_|_.__/|_|_|_|\\__|_|\\___||___/\n");
+printf("                            |_|                                                      \n\n");
 
 };
 
@@ -138,8 +166,8 @@ void mostrar_barra_progreso(int contador_actual, int valor_maximo, int porcentag
 
 }
 
-=======
 int validar_dospares(carta array_mano[]){
+
     /*  Para validar 2 pares usamos la lógica para vadilar full house:
         Se ulitizará un array de 13 campos que servirán como contador de apariciones para cada valor
         de las cartas. Luego se recorre la mano y se suma un 1 en el indice que le corresponde a esta 
@@ -171,6 +199,7 @@ int validar_dospares(carta array_mano[]){
 }
 
 int validar_poker(carta array_mano[]){
+
     /*  Para validar 2 pares usamos la lógica para vadilar full house:
         Se ulitizará un array de 13 campos que servirán como contador de apariciones para cada valor
         de las cartas. Luego se recorre la mano y se suma un 1 en el indice que le corresponde a esta 
@@ -197,6 +226,7 @@ int validar_poker(carta array_mano[]){
 }
 
 int validar_escalerareal(carta array_mano[]){
+    
     /*  Para esta validación se utilizará un array de 5 elementos que sirve como contador y
         una variable que sirve para verificar que todas sean el mismo tipo (palo).
     */
@@ -226,16 +256,16 @@ int validar_escalerareal(carta array_mano[]){
     return 1;
 }
 
+void calculate_theorical_probabilities(){
 
->>>>>>> 4f19118cde3856dba33e1c4b1910f397c62213a8
-int main () {
-
-/* 
-    Se calculan las probabilidades de cada uno de los eventos haciendo un conteo de casos que verifican el el evento conjunto
-    con el total de casos de un evento, para luego aplicar LaPlace. Esto lo hacemos con el uso de coeficientes binomiales.
+/*
+ * Rutina: Calcula e imprime las probabilidades teoricas de cada mano
+ * --------------------------------------------------
+ *  
+ * Calcula las probabilidades teoricas siguiendo los resultados de una analisis del
+ * espacio muestral previamente hecho y utiliza coeficientes binomiales para calcularlo
+ *
 */
-
-mostrar_informacion_general();
 
 float pRoyalFlush = CoeficienteBinomial(4,1) / (float) CoeficienteBinomial(52,5);
 double pDosPares = (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) / (float) CoeficienteBinomial(52, 5);
@@ -243,15 +273,36 @@ double pFullHouse = (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12
 float pQuad = (13 * 12 * 4) / (float) CoeficienteBinomial(52, 5);
 float pTotal = pRoyalFlush + pDosPares + pFullHouse + pFullHouse + pQuad;
 
-//printf("La probabilidad de un doble par es de %f\n", pDosPares);
+printf("[TEORICA] P(Doble Par) = %f\n", pDosPares);
+printf("[TEORICA] P(Full House) = %f\n", pFullHouse);
+printf("[TEORICA] P(Quad) = %f\n", pQuad);
+printf("[TEORICA] P(Royal Flush) = %f\n", pRoyalFlush);
+printf("[TEORICA] P(Total) = %f\n", pTotal);
 
-printf("P(Doble Par) = %f\n", pDosPares);
-printf("P(Full House) = %f\n", pFullHouse);
-printf("P(Quad) = %f\n", pQuad);
-printf("P(Royal Flush) = %f\n", pRoyalFlush);
-printf("P(Total) = %f\n", pTotal);
+}
 
-printf("Presione ENTER para continuar con las pruebas empiricas");
+
+int main () {
+
+srand(time(NULL));
+
+/* 
+    Se calculan las probabilidades de cada uno de los eventos haciendo un conteo de casos que verifican el el evento conjunto
+    con el total de casos de un evento, para luego aplicar LaPlace. Esto lo hacemos con el uso de coeficientes binomiales.
+*/
+mostrar_informacion_general();
+
+printf("Las manos que analizaremos en ese programa son las siguientes:\n\n");
+printf("* Doble Par (Double Pair)\n");
+printf("* Cuatro iguales (Quad)\n");
+printf("* Full House\n");
+printf("* Escalera Real (Royal Flush)\n\n");
+
+printf("Sus probabilidades teoricas son:\n\n");
+
+calculate_theorical_probabilities();
+
+printf("\nPresione ENTER para continuar con las pruebas empiricas");
 char c = getchar();
 
 /*
@@ -286,12 +337,9 @@ for (int i = 0; i < NUM_PALOS; i++) {
 
 
 //mostrar_mazo(array_cartas, NUM_CARTAS);
-<<<<<<< HEAD
 
 // Se crea el un nuevo array tipo carta para tomar una mano del mazo
 
-=======
->>>>>>> 4f19118cde3856dba33e1c4b1910f397c62213a8
 carta cartas_mano[5];
 
 
@@ -308,6 +356,12 @@ int division_porcentage = 1;
 int m_iteration_value = 1;
 int linear_count = 0;
 
+// Se inicializa variable para contabilizar la cantidad de exitos
+
+int total_succeses = 0;
+int royal_flush_succeses = 0;
+int quad_succeses = 0;
+int double_pair_succeses = 0;
 
 
 for (int i = 0; i < M; i++){
@@ -318,19 +372,21 @@ for (int i = 0; i < M; i++){
 
         mezclar_mazo(array_cartas);
 
+
         for (int i = 0; i < NUM_CARTAS_MANO; i++) {
 
         // Se leen los primeros cinco valores del array de cartas y se toman como una mano
 
             cartas_mano[i] = array_cartas[i]; 
         }
-        
-        /*//Para realizar pruebas para verificar masos
+
+        /*
+        //Para realizar pruebas para verificar masos
         cartas_mano[0].numero=1;
-        cartas_mano[1].numero=1;
-        cartas_mano[2].numero=1;
-        cartas_mano[3].numero=1;
-        cartas_mano[4].numero=3;
+        cartas_mano[1].numero=10;
+        cartas_mano[2].numero=11;
+        cartas_mano[3].numero=12;
+        cartas_mano[4].numero=13;
         */
 
         // Al contador lineal se le asigna el numero de iteraciones totales hasta el momento
@@ -344,32 +400,44 @@ for (int i = 0; i < M; i++){
             // Se incrementa el porcentaje que buscaremos para la proxima iteracion
 
             division_porcentage += 1;
+            
 
             mostrar_barra_progreso((j + (m_iteration_value - 1) * N), M * N, division_porcentage);
 
         }
 
         if(validar_escalerareal(cartas_mano)){
-            printf("La mano es una escalera real.\n");
-        }else{
+            royal_flush_succeses +=1;
+        }else {
+
             if(validar_poker(cartas_mano)){
-                printf("La mano es un poker.\n");
-            }else{
+                quad_succeses += 1;
+            }
+            else{
+
                 if(validar_dospares(cartas_mano)){
-                    printf("La mano es 2 pares.\n");
-                }else{
-                    printf("La mano no es ninguna mano válida.\n");
+                    double_pair_succeses += 1;
                 }
             }
         }
     }
-
     // El valor de la iteracion de muestra es actualizado
 
     m_iteration_value += 1;
     
 }
-printf("\n");
+
+total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses;
+
+printf("\n\n");
+
+printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
+printf("[Empirica] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
+printf("[Empirica] P(Quad) = %f\n", quad_succeses / (float) linear_count);
+printf("[Empirica] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
+printf("[Empirica] P(Total) = %f\n\n", total_succeses / (float) linear_count);
+
+calculate_theorical_probabilities();
 
 return 0;
 
