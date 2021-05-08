@@ -7,8 +7,8 @@
 #define NUM_CARTAS_PALO 13
 #define NUM_CARTAS_MANO 5
 #define NUM_PALOS 4
-#define N 10
-#define M 5000
+#define N 1
+#define M 1
 
 
 /*
@@ -233,7 +233,7 @@ for (int i = 0; i < NUM_PALOS; i++) {
 }
 
 
-mostrar_mazo(array_cartas, NUM_CARTAS);
+//mostrar_mazo(array_cartas, NUM_CARTAS);
 carta cartas_mano[5];
 
 for (int i = 0; i < N; i++){
@@ -243,10 +243,31 @@ for (int i = 0; i < N; i++){
         for (int i = 0; i < NUM_CARTAS_MANO; i++) {
             cartas_mano[i] = array_cartas[i]; 
         }
+        
+        /*//Para realizar pruebas para verificar masos
+        cartas_mano[0].numero=1;
+        cartas_mano[1].numero=1;
+        cartas_mano[2].numero=1;
+        cartas_mano[3].numero=1;
+        cartas_mano[4].numero=3;
+        */
 
         printf("\n");
         mostrar_mazo(cartas_mano, NUM_CARTAS_MANO);
 
+        if(validar_escalerareal(cartas_mano)){
+            printf("La mano es una escalera real.\n");
+        }else{
+            if(validar_poker(cartas_mano)){
+                printf("La mano es un poker.\n");
+            }else{
+                if(validar_dospares(cartas_mano)){
+                    printf("La mano es 2 pares.\n");
+                }else{
+                    printf("La mano no es ninguna mano válida.\n");
+                }
+            }
+        }
     }
 }
 
