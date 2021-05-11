@@ -1,14 +1,15 @@
 /*
-=======================================================================================================================================================================================================
-                                                                            Tecnológico de Costa Rica
-                                                                Proyecto Programado Lenguajes de programacion (IC4700)
+==========================================================================================================================
+                                            Tecnológico de Costa Rica
+                                Proyecto Programado Lenguajes de programacion (IC4700)
+
 Autores:Eric Alpizar.
         Jacob Picado.
         Natalia Vargas.
         Patrick Vindas.
 
-Fecha de ultima modificación: 08/05/2021.
-=======================================================================================================================================================================================================
+Fecha de ultima modificación: 11/05/2021.
+==========================================================================================================================
 */
 
 #include <stdio.h>
@@ -21,9 +22,12 @@ Fecha de ultima modificación: 08/05/2021.
 #define NUM_CARTAS_PALO 13
 #define NUM_CARTAS_MANO 5
 #define NUM_PALOS 4
-//#define N 649739
+
 #define N 649739
-#define M 70
+#define M 120
+
+
+
 /*
 Se declara un nuevo tipo llamado carta, los atributos que pueden componener a este mismo estan definidos de la siguiente manera:
 
@@ -83,6 +87,9 @@ int cmpfunc (const void * a, const void * b) {
 
    return ( cartaB->numero - cartaA->numero );
 }
+
+
+
 int determinarM()
 /*
  * Funcion: Determina el valor estadístico de m
@@ -101,6 +108,8 @@ int determinarM()
 
 }
 
+
+
 int determinarN()
 /*
  * Funcion: Determina el valor estadístico de n.
@@ -116,19 +125,28 @@ int determinarN()
     float NDosPares = (float) CoeficienteBinomial(52, 5) / (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) ;
     float NFullHouse = (float) CoeficienteBinomial(52, 5) / (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) ;
     float NQuad = (float) CoeficienteBinomial(52, 5) / (13 * 12 * 4) ;
+
+
     float Nmuestra[3];
     int mayor = 0;
+
+
     Nmuestra[0] = NRoyalFlush;
     Nmuestra[1] = NDosPares;
     Nmuestra[2] = NFullHouse;
     Nmuestra[3] = NQuad;
+
+
+
     for(int i=0; i < 4; i++){
         if(Nmuestra[i]>mayor){
             mayor = Nmuestra[i];
         }
     }
     return mayor;
+
 }
+
 
 
 void mostrar_mazo(carta array_cartas[], int n)
@@ -167,8 +185,10 @@ void mezclar_mazo(carta array_cartas[])
         carta temp = array_cartas[i];
         array_cartas[i] = array_cartas[r];
         array_cartas[r] = temp;
+        
     }
 }
+
 
 
 void ordenar_mazo(carta array_cartas[]) 
@@ -180,6 +200,7 @@ void ordenar_mazo(carta array_cartas[])
  *   array_cartas[]: arreglo de tipo cartas
  *
 */
+
 {
 
     qsort(array_cartas, NUM_CARTAS, sizeof(carta), cmpfunc);
@@ -231,7 +252,10 @@ void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcenta
 
     system("clear");
     printf("\e[?25l");
+
+    // La informacion general es mostrada en pantalla
     mostrar_informacion_general();
+
     progress_array[0] = '[';
     progress_array[101] = ']';
 
@@ -243,6 +267,8 @@ void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcenta
     fflush(stdout);
 
 }
+
+
 
 int validar_dospares(carta array_mano[]){
 
@@ -282,6 +308,10 @@ int validar_dospares(carta array_mano[]){
     else return 0;
 }
 
+
+
+
+
 int validar_poker(carta array_mano[]){
 
     /*  Para validar 2 pares usamos la lógica para vadilar full house:
@@ -313,6 +343,10 @@ int validar_poker(carta array_mano[]){
     //Si sale del ciclo for significa que no hay un poker
     return 0;
 }
+
+
+
+
 
 int validar_escalerareal(carta array_mano[]){
     
@@ -350,6 +384,8 @@ int validar_escalerareal(carta array_mano[]){
     //Si sale del ciclo for significa que sí hay escalera real
     return 1;
 }
+
+
 
 void calculate_theorical_probabilities(){
 
@@ -408,11 +444,6 @@ char c = getchar();
     D = Diamante
     T = Trebol
 
-    Estos del 2 al 10
-    11 = Jota
-    12 = Reina
-    13 = Rey
-    14 = As
 */
 
 //Se crean las 52 cartas combiando numero con tipo
@@ -436,13 +467,15 @@ for (int i = 0; i < NUM_PALOS; i++) {
     }
 }
 
-
-
 // Se crea el un nuevo array tipo carta para tomar una mano del mazo
+
 carta cartas_mano[5];
+
+
 /* 
 
 Se instancian dos variables necesarias para contabilizar el progreso de el proceso
+
 division_porcentage = Contador que mide el porcentaje para sacar
 m_iteration_value = Contador que se encarga de medir el numero de iteracion de la muestra
 
@@ -454,35 +487,45 @@ long linear_count = 0;
 long max_value = M * N;
 
 // Se inicializa variable para contabilizar la cantidad de exitos (Frecuencias)
+
 int total_succeses = 0;
 int royal_flush_succeses = 0;
 int quad_succeses = 0;
 int double_pair_succeses = 0;
+
+// Variables para contabilizar los exitos por cada simulacion son inicializadas
 
 int average_royal_flush_succeses = 0;
 int average_quad_succeses = 0;
 int average_double_pair_succeses = 0;
 
 
+// Se inicializan las variables para contabilizar la media de probabilidades
+
 float royal_flush_average = 0;
 float quad_average = 0;
 float double_pair_average = 0;
 
-//
+
 // Valores de mustras
-//int N = 10000;//determinarN();
+
 //int M = determinarM();
 
 
 for (int i = 0; i < M; i++){
 
+
+    // El mazo se ordena cada vez que se va a tomar una nueva muestra
+
     ordenar_mazo(array_cartas);
+
 
     for (int j = 0; j < N; j++) {
 
         // Se mezcla el mazo para cada vez que se saca una mano
 
         mezclar_mazo(array_cartas);
+
 
         for (int i = 0; i < NUM_CARTAS_MANO; i++) {
 
@@ -491,31 +534,51 @@ for (int i = 0; i < M; i++){
             cartas_mano[i] = array_cartas[i]; 
 
         }
+
+
         // Al contador lineal se le asigna el numero de iteraciones totales hasta el momento
 
         linear_count = j + (m_iteration_value - 1) * N;
 
         // Condicionante que pregunta si el valor lineal ha llegado al porcentaje siguiente de las iteraciones totales
 
+
+
         if (linear_count == roundl( ((division_porcentage) / (float) 100 ) * (max_value) ) && division_porcentage <= 99)  {
 
             // Se incrementa el porcentaje que buscaremos para la proxima iteracion
-            division_porcentage += 1;
 
+            division_porcentage += 1;
             mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
 
             
 
         }
+
+
+        // Se valida si la escalera cumple con algunos de los eventos que buscamos
+
+
         if(validar_escalerareal(cartas_mano)){
+
             royal_flush_succeses +=1;
+            average_royal_flush_succeses += 1;
+
         }else {
+
             if(validar_poker(cartas_mano)){
+
                 quad_succeses += 1;
+                average_quad_succeses += 1;
+
             }
             else{
                 if(validar_dospares(cartas_mano)){
+
                     double_pair_succeses += 1;
+                    average_double_pair_succeses += 1;
+
+
                 }
             }
         }
@@ -527,25 +590,31 @@ for (int i = 0; i < M; i++){
 
     //Probabilidades empiricas de cada simulacion
 
-    royal_flush_average += (royal_flush_succeses / (float) N);
-    quad_average += (quad_succeses / (float) N);
-    double_pair_average += (double_pair_succeses / (float) N);
+    royal_flush_average += (average_royal_flush_succeses / (float) N);
+    quad_average += (average_quad_succeses / (float) N);
+    double_pair_average += (average_double_pair_succeses / (float) N);
+
+
+    // Las variables que contabilizan los exitos por cada simulacion son reiniciadas 
+
     average_royal_flush_succeses = 0;
     average_quad_succeses = 0;
     average_double_pair_succeses = 0;
     
 }
 
+// Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
+
 total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses;
 
 printf("\n\n");
 
-printf("La media de las probabilidades son las siguientes:\n\n");
-printf("[Empirica] Media P(Doble Par) = %f\n", royal_flush_average);
-printf("[Empirica] Media P(Quad) = %f\n", quad_average);
-printf("[Empirica] Media P(Royal Flush) = %f\n", double_pair_average);
+printf("La media de las probabilidades resultantes en cada simulacion es:\n\n");
+printf("[EMPIRICA] Media P(Doble Par) = %f\n", double_pair_average / (float) M);
+printf("[EMPIRICA] Media P(Quad) = %f\n", quad_average / (float) M);
+printf("[EMPIRICA] Media P(Royal Flush) = %f\n\n", royal_flush_average / (float) M);
 
-printf("\n\n");
+
 
 printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
 printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
