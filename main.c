@@ -5,7 +5,7 @@
 Autores:Eric Alpizar.
         Jacob Picado.
         Natalia Vargas.
-        Patrick Vindas..
+        Patrick Vindas.
 
 Fecha de ultima modificación: 08/05/2021.
 =======================================================================================================================================================================================================
@@ -21,9 +21,6 @@ Fecha de ultima modificación: 08/05/2021.
 #define NUM_CARTAS_PALO 13
 #define NUM_CARTAS_MANO 5
 #define NUM_PALOS 4
-//#define N 649739
-#define N 649739
-#define M 40
 
 /*
 Se declara un nuevo tipo llamado carta, los atributos que pueden componener a este mismo estan definidos de la siguiente manera:
@@ -67,6 +64,53 @@ int CoeficienteBinomial(int n, int k)
 }
 
 
+
+int determinarM()
+/*
+ * Funcion: Determina el valor estadístico de m
+ * ---------------------------------------------------
+ *  
+ *
+*/
+
+{
+    
+    float zAlfaMedios = 2.32635;   // Indica el valor x de la normal estándar con 0,005 como probabilidad si la confianza es del 98%
+    float estimacionPQ = 0.25;      // Estimación de P y Q, cuando no se tienen
+    float radio = 0.005;            // Radio pequeño para mejor aproximación de m, del 0,5%
+    int n = pow((zAlfaMedios*sqrt(estimacionPQ))/radio,2);   //calcula n para muestra de una proporción
+    return n;
+
+}
+
+int determinarN()
+/*
+ * Funcion: Determina el valor estadístico de n.
+ * valor de veces a tirar para que salga 1 mano, 
+ * es el n más alto para escalera real, por lo que sirve para todos.
+ * ---------------------------------------------------------------------
+ *  
+ *
+*/
+{
+
+    float NRoyalFlush = (float) CoeficienteBinomial(52,5) / CoeficienteBinomial(4,1);
+    float NDosPares = (float) CoeficienteBinomial(52, 5) / (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) ;
+    float NFullHouse = (float) CoeficienteBinomial(52, 5) / (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) ;
+    float NQuad = (float) CoeficienteBinomial(52, 5) / (13 * 12 * 4) ;
+    float Nmuestra[3];
+    int mayor = 0;
+    Nmuestra[0] = NRoyalFlush;
+    Nmuestra[1] = NDosPares;
+    Nmuestra[2] = NFullHouse;
+    Nmuestra[3] = NQuad;
+    for(int i=0; i < 4; i++){
+        if(Nmuestra[i]>mayor){
+            mayor = Nmuestra[i];
+        }
+    }
+    return mayor;
+}
 
 
 void mostrar_mazo(carta array_cartas[], int n)
@@ -176,9 +220,7 @@ int validar_dospares(carta array_mano[]){
 
     // Contadores para cada valor: A,2,3,4,5,6,7,8,9,10,J,Q,K, o en este caso del 1 al 13
     int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
-    
     int parejas=0;//Variable para verificar que hayan 2 parejas
-
     int indice;
     for(int i=0;i<NUM_CARTAS_MANO;i++){
         /*
@@ -188,12 +230,10 @@ int validar_dospares(carta array_mano[]){
         indice=array_mano[i].numero;
         contadores[indice-1]++;
     }
-
     //Cuenta las parejas
     for(int e=0;e<NUM_CARTAS_PALO;e++){
         if(contadores[e]==2)parejas++;
     }
-
     if (parejas==2) return 1;
     else return 0;
 }
@@ -208,7 +248,6 @@ int validar_poker(carta array_mano[]){
 
     // Contadores para cada valor: A,2,3,4,5,6,7,8,9,10,J,Q,K, o en este caso del 1 al 13
     int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
-
     int indice;
     for(int i=0;i<NUM_CARTAS_MANO;i++){
         /*
@@ -217,7 +256,6 @@ int validar_poker(carta array_mano[]){
         */
         indice=array_mano[i].numero;
         contadores[indice-1]++;
-
         //Despues de sumarle 1 al indice de la carta verifica si tiene 4
         if(contadores[indice-1]==4) return 1;
     }
@@ -235,7 +273,6 @@ int validar_escalerareal(carta array_mano[]){
     int contadores[5]={0,0,0,0,0};
     //Obtiene el tipo de la primera carta para verificar que las demás sean del mismo
     char tipo=array_mano[0].palo;
-
     int indice;
     for(int i=0;i<NUM_CARTAS_MANO;i++){
         indice=array_mano[i].numero;
@@ -303,7 +340,7 @@ printf("Sus probabilidades teoricas son:\n\n");
 calculate_theorical_probabilities();
 
 printf("\nPresione ENTER para continuar con las pruebas empiricas");
-char c = getchar();
+//char c = getchar();
 
 /*
     Se crea un array constante que contiene los caracteres para representar cada palo, estos
@@ -313,14 +350,18 @@ char c = getchar();
     C = Corazon
     D = Diamante
     T = Trebol
+
+    Estos del 2 al 10
+    11 = Jota
+    12 = Reina
+    13 = Rey
+    14 = As
 */
 
+//Se crean las 52 cartas combiando numero con tipo
 char tipoPalos[4] = {'B', 'C', 'D', 'T'};
-
 // Se crea el array que se encargara de manejar el mazo de cartas
-
 carta array_cartas[52];
-
 
 // Todas las asignan todos los valores de las cartas correspondientes a una baraja inglesa
 
@@ -336,17 +377,12 @@ for (int i = 0; i < NUM_PALOS; i++) {
 }
 
 
-//mostrar_mazo(array_cartas, NUM_CARTAS);
 
 // Se crea el un nuevo array tipo carta para tomar una mano del mazo
-
 carta cartas_mano[5];
-
-
 /* 
 
 Se instancian dos variables necesarias para contabilizar el progreso de el proceso
-
 division_porcentage = Contador que mide el porcentaje para sacar
 m_iteration_value = Contador que se encarga de medir el numero de iteracion de la muestra
 
@@ -356,86 +392,76 @@ int division_porcentage = 1;
 int m_iteration_value = 1;
 int linear_count = 0;
 
-// Se inicializa variable para contabilizar la cantidad de exitos
-
+// Se inicializa variable para contabilizar la cantidad de exitos (Frecuencias)
 int total_succeses = 0;
 int royal_flush_succeses = 0;
 int quad_succeses = 0;
 int double_pair_succeses = 0;
 
+float royal_flush_average = 0;
+float quad_average = 0;
+float double_pair_average = 0;
+//
+// Valores de mustras
+int N = 10000;//determinarN();
+int M = determinarM();
+
 
 for (int i = 0; i < M; i++){
 
     for (int j = 0; j < N; j++) {
-
         // Se mezcla el mazo para cada vez que se saca una mano
-
         mezclar_mazo(array_cartas);
-
-
         for (int i = 0; i < NUM_CARTAS_MANO; i++) {
-
         // Se leen los primeros cinco valores del array de cartas y se toman como una mano
-
             cartas_mano[i] = array_cartas[i]; 
         }
-
-        /*
-        //Para realizar pruebas para verificar masos
-        cartas_mano[0].numero=1;
-        cartas_mano[1].numero=10;
-        cartas_mano[2].numero=11;
-        cartas_mano[3].numero=12;
-        cartas_mano[4].numero=13;
-        */
-
         // Al contador lineal se le asigna el numero de iteraciones totales hasta el momento
-
         linear_count = j + (m_iteration_value - 1) * N;
-
         // Condicionante que pregunta si el valor lineal ha llegado al porcentaje siguiente de las iteraciones totales
-
         if (linear_count == round( ((division_porcentage) / (float) 100 ) * (M * N) ) )  {
-
             // Se incrementa el porcentaje que buscaremos para la proxima iteracion
-
             division_porcentage += 1;
-            
-
             mostrar_barra_progreso((j + (m_iteration_value - 1) * N), M * N, division_porcentage);
-
         }
-
         if(validar_escalerareal(cartas_mano)){
             royal_flush_succeses +=1;
         }else {
-
             if(validar_poker(cartas_mano)){
                 quad_succeses += 1;
             }
             else{
-
                 if(validar_dospares(cartas_mano)){
                     double_pair_succeses += 1;
                 }
             }
         }
     }
-    // El valor de la iteracion de muestra es actualizado
+    //Probabilidades empiricas de cada simulacion ESTA PARTE SIEMPRE DA CERO Y NO SÉ
+    royal_flush_average += (royal_flush_succeses / N);
+    quad_average += (quad_succeses / N);
+    double_pair_average += (double_pair_succeses / N);
+    royal_flush_succeses = 0;
+    quad_succeses = 0;
+    double_pair_succeses = 0;
 
-    m_iteration_value += 1;
-    
+    m_iteration_value += 1;  // El valor de la iteracion de muestra es actualizado
 }
 
 total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses;
 
 printf("\n\n");
-
+/*
 printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
 printf("[Empirica] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
 printf("[Empirica] P(Quad) = %f\n", quad_succeses / (float) linear_count);
 printf("[Empirica] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
 printf("[Empirica] P(Total) = %f\n\n", total_succeses / (float) linear_count);
+*/
+printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
+printf("[Empirica] P(Doble Par) = %f\n", royal_flush_average);
+printf("[Empirica] P(Quad) = %f\n", quad_average);
+printf("[Empirica] P(Royal Flush) = %f\n", double_pair_average);
 
 calculate_theorical_probabilities();
 
