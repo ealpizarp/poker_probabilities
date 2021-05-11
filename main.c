@@ -127,18 +127,18 @@ int determinarN()
     float NQuad = (float) CoeficienteBinomial(52, 5) / (13 * 12 * 4) ;
 
 
-    float Nmuestra[3];
+    float Nmuestra[4];
     int mayor = 0;
 
 
-    Nmuestra[0] = NRoyalFlush;
-    Nmuestra[1] = NDosPares;
-    Nmuestra[2] = NFullHouse;
-    Nmuestra[3] = NQuad;
+    Nmuestra[1] = NRoyalFlush;
+    Nmuestra[2] = NDosPares;
+    Nmuestra[3] = NFullHouse;
+    Nmuestra[4] = NQuad;
 
 
 
-    for(int i=0; i < 4; i++){
+    for(int i=1; i <= 4; i++){
         if(Nmuestra[i]>mayor){
             mayor = Nmuestra[i];
         }
