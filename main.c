@@ -268,7 +268,49 @@ void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcenta
 
 }
 
+int validar_fullhouse(carta array_mano[]){
 
+    /*  Se ulitizará un array de 13 campos que servirán como contador de apariciones para cada valor
+        de las cartas. Luego se recorre la mano y se suma un 1 en el indice que le corresponde a esta 
+        carta. Finalmente se recorre el array para verificar que hayan un indice con un valor de 2 y 
+        otro indice con un valor de 3.
+    */
+
+    // Contadores para cada valor: A,2,3,4,5,6,7,8,9,10,J,Q,K, o en este caso del 1 al 13
+
+    int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+    int pareja=0;//Variable para verificar que haya 1 pareja
+    int trio=0;//Variable para verificar que haya 1 trio
+    int indice;
+
+
+    for(int i=0;i<NUM_CARTAS_MANO;i++){
+
+        /*
+        Ya que las cartes están representadas del 1 al 13 para acceder a su respectivo 
+        campo en el array de contadores es el valor que representa menos uno.
+        */
+        indice=array_mano[i].numero;
+        contadores[indice-1]++;
+    }
+
+
+    //Revisa los valores en el array y suma a las variables.
+    for(int e=0;e<NUM_CARTAS_PALO;e++){
+        if(contadores[e]==3){
+            trio++;
+        }
+        else{
+            if(contadores[e]==2){
+                pareja++;
+            }
+        }     
+    }
+    //Revisa el resultado de la mano para ver si hay un fullhouse (si hay un trio y una pareja) 
+    if (pareja==1 && trio==1) return 1;
+    else return 0;
+}
 
 int validar_dospares(carta array_mano[]){
 
@@ -492,12 +534,14 @@ int total_succeses = 0;
 int royal_flush_succeses = 0;
 int quad_succeses = 0;
 int double_pair_succeses = 0;
+int full_house_succeses = 0;
 
 // Variables para contabilizar los exitos por cada simulacion son inicializadas
 
 int average_royal_flush_succeses = 0;
 int average_quad_succeses = 0;
 int average_double_pair_succeses = 0;
+float average_full_house_succeses = 0;
 
 
 // Se inicializan las variables para contabilizar la media de probabilidades
@@ -505,6 +549,8 @@ int average_double_pair_succeses = 0;
 float royal_flush_average = 0;
 float quad_average = 0;
 float double_pair_average = 0;
+float full_house_average = 0;
+
 
 
 // Valores de mustras
@@ -569,17 +615,24 @@ for (int i = 0; i < M; i++){
             if(validar_poker(cartas_mano)){
 
                 quad_succeses += 1;
-                average_quad_succeses += 1;
+                average_quad_succeses +=1;
 
-            }
-            else{
-                if(validar_dospares(cartas_mano)){
+            }else{
 
-                    double_pair_succeses += 1;
-                    average_double_pair_succeses += 1;
+                if(validar_fullhouse(cartas_mano)){
 
+                    full_house_succeses += 1;
+                    average_full_house_succeses += 1;
 
+                } else{
+
+                    if(validar_dospares(cartas_mano)){
+                        double_pair_succeses += 1;
+                        average_double_pair_succeses += 1;
+
+                    }
                 }
+
             }
         }
     }
@@ -593,6 +646,7 @@ for (int i = 0; i < M; i++){
     royal_flush_average += (average_royal_flush_succeses / (float) N);
     quad_average += (average_quad_succeses / (float) N);
     double_pair_average += (average_double_pair_succeses / (float) N);
+    full_house_average += (average_full_house_succeses / (float) N);
 
 
     // Las variables que contabilizan los exitos por cada simulacion son reiniciadas 
@@ -600,25 +654,27 @@ for (int i = 0; i < M; i++){
     average_royal_flush_succeses = 0;
     average_quad_succeses = 0;
     average_double_pair_succeses = 0;
+    average_full_house_succeses = 0;
     
 }
 
 // Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
 
-total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses;
+total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses + full_house_succeses;
 
 printf("\n\n");
 
 printf("La media de las probabilidades resultantes en cada simulacion es:\n\n");
 printf("[EMPIRICA] Media P(Doble Par) = %f\n", double_pair_average / (float) M);
 printf("[EMPIRICA] Media P(Quad) = %f\n", quad_average / (float) M);
+printf("[EMPIRICA] Media P(Full House) = %f\n", full_house_average / (float) M);
 printf("[EMPIRICA] Media P(Royal Flush) = %f\n\n", royal_flush_average / (float) M);
-
 
 
 printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
 printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
 printf("[EMPIRICA] P(Quad) = %f\n", quad_succeses / (float) linear_count);
+printf("[EMPIRICA] P(Full House) = %f\n", full_house_succeses / (float) linear_count);
 printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
 printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
 
