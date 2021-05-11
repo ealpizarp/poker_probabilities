@@ -2,7 +2,7 @@
 SOURCES = main.c
 
 # The name of the executable
-EXE = results
+EXE = poker
 
 # Flags for compilation (adding warnings are always good)
 CFLAGS = -Wall
@@ -38,5 +38,3 @@ clean:
 
 # Finally we need to tell "make" what source and header file each object file depends on
 main.o: main.c 
-#hellomain.o: hellomain.c helloheader.h
-#hellofunc.o: hellofunc.c helloheader.h
