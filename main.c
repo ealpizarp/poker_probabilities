@@ -244,6 +244,50 @@ void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcenta
 
 }
 
+int validar_fullhouse(carta array_mano[]){
+
+    /*  Se ulitizará un array de 13 campos que servirán como contador de apariciones para cada valor
+        de las cartas. Luego se recorre la mano y se suma un 1 en el indice que le corresponde a esta 
+        carta. Finalmente se recorre el array para verificar que hayan un indice con un valor de 2 y 
+        otro indice con un valor de 3.
+    */
+
+    // Contadores para cada valor: A,2,3,4,5,6,7,8,9,10,J,Q,K, o en este caso del 1 al 13
+
+    int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+    int pareja=0;//Variable para verificar que haya 1 pareja
+    int trio=0;//Variable para verificar que haya 1 trio
+    int indice;
+
+
+    for(int i=0;i<NUM_CARTAS_MANO;i++){
+
+        /*
+        Ya que las cartes están representadas del 1 al 13 para acceder a su respectivo 
+        campo en el array de contadores es el valor que representa menos uno.
+        */
+        indice=array_mano[i].numero;
+        contadores[indice-1]++;
+    }
+
+
+    //Revisa los valores en el array y suma a las variables.
+    for(int e=0;e<NUM_CARTAS_PALO;e++){
+        if(contadores[e]==3){
+            trio++;
+        }
+        else{
+            if(contadores[e]==2){
+                pareja++;
+            }
+        }     
+    }
+    //Revisa el resultado de la mano para ver si hay un fullhouse (si hay un trio y una pareja) 
+    if (pareja==1 && trio==1) return 1;
+    else return 0;
+}
+
 int validar_dospares(carta array_mano[]){
 
     /*  Para validar 2 pares usamos la lógica para vadilar full house:
@@ -458,6 +502,7 @@ int total_succeses = 0;
 int royal_flush_succeses = 0;
 int quad_succeses = 0;
 int double_pair_succeses = 0;
+int full_house_succeses = 0;
 
 int average_royal_flush_succeses = 0;
 int average_quad_succeses = 0;
@@ -512,10 +557,13 @@ for (int i = 0; i < M; i++){
         }else {
             if(validar_poker(cartas_mano)){
                 quad_succeses += 1;
-            }
-            else{
-                if(validar_dospares(cartas_mano)){
-                    double_pair_succeses += 1;
+            }else{
+                if(validar_fullhouse(cartas_mano)){
+                    full_house_succeses += 1;
+                }else{
+                    if(validar_dospares(cartas_mano)){
+                        double_pair_succeses += 1;
+                    }
                 }
             }
         }
