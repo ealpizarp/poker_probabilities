@@ -83,6 +83,53 @@ int cmpfunc (const void * a, const void * b) {
 
    return ( cartaB->numero - cartaA->numero );
 }
+int determinarM()
+/*
+ * Funcion: Determina el valor estadístico de m
+ * ---------------------------------------------------
+ *  
+ *
+*/
+
+{
+    
+    float zAlfaMedios = 2.32635;   // Indica el valor x de la normal estándar con 0,005 como probabilidad si la confianza es del 98%
+    float estimacionPQ = 0.25;      // Estimación de P y Q, cuando no se tienen
+    float radio = 0.005;            // Radio pequeño para mejor aproximación de m, del 0,5%
+    int n = pow((zAlfaMedios*sqrt(estimacionPQ))/radio,2);   //calcula n para muestra de una proporción
+    return n;
+
+}
+
+int determinarN()
+/*
+ * Funcion: Determina el valor estadístico de n.
+ * valor de veces a tirar para que salga 1 mano, 
+ * es el n más alto para escalera real, por lo que sirve para todos.
+ * ---------------------------------------------------------------------
+ *  
+ *
+*/
+{
+
+    float NRoyalFlush = (float) CoeficienteBinomial(52,5) / CoeficienteBinomial(4,1);
+    float NDosPares = (float) CoeficienteBinomial(52, 5) / (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) ;
+    float NFullHouse = (float) CoeficienteBinomial(52, 5) / (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) ;
+    float NQuad = (float) CoeficienteBinomial(52, 5) / (13 * 12 * 4) ;
+    float Nmuestra[3];
+    int mayor = 0;
+    Nmuestra[0] = NRoyalFlush;
+    Nmuestra[1] = NDosPares;
+    Nmuestra[2] = NFullHouse;
+    Nmuestra[3] = NQuad;
+    for(int i=0; i < 4; i++){
+        if(Nmuestra[i]>mayor){
+            mayor = Nmuestra[i];
+        }
+    }
+    return mayor;
+}
+
 
 void mostrar_mazo(carta array_cartas[], int n)
 
@@ -206,25 +253,31 @@ int validar_dospares(carta array_mano[]){
     */
 
     // Contadores para cada valor: A,2,3,4,5,6,7,8,9,10,J,Q,K, o en este caso del 1 al 13
-    int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
-    
-    int parejas=0;//Variable para verificar que hayan 2 parejas
 
+    int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+    int parejas=0;//Variable para verificar que hayan 2 parejas
     int indice;
+
+
     for(int i=0;i<NUM_CARTAS_MANO;i++){
+
         /*
         Ya que las cartes están representadas del 1 al 13 para acceder a su respectivo 
         campo en el array de contadores es el valor que representa menos uno.
         */
+
         indice=array_mano[i].numero;
         contadores[indice-1]++;
     }
 
+
     //Cuenta las parejas
     for(int e=0;e<NUM_CARTAS_PALO;e++){
-        if(contadores[e]==2)parejas++;
-    }
 
+        if(contadores[e]==2)parejas++;
+
+    }
     if (parejas==2) return 1;
     else return 0;
 }
@@ -239,19 +292,24 @@ int validar_poker(carta array_mano[]){
 
     // Contadores para cada valor: A,2,3,4,5,6,7,8,9,10,J,Q,K, o en este caso del 1 al 13
     int contadores[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};
-
     int indice;
+
+
     for(int i=0;i<NUM_CARTAS_MANO;i++){
+
         /*
         Ya que las cartes están representadas del 1 al 13 para acceder a su respectivo 
         campo en el array de contadores es el valor que representa menos uno.
         */
+
         indice=array_mano[i].numero;
+
         contadores[indice-1]++;
 
         //Despues de sumarle 1 al indice de la carta verifica si tiene 4
         if(contadores[indice-1]==4) return 1;
     }
+
     //Si sale del ciclo for significa que no hay un poker
     return 0;
 }
@@ -263,20 +321,26 @@ int validar_escalerareal(carta array_mano[]){
     */
 
     // Contadores para los valores: A,10,J,Q,K. Más adelante se indica como se manejará los indices
+
     int contadores[5]={0,0,0,0,0};
+
     //Obtiene el tipo de la primera carta para verificar que las demás sean del mismo
     char tipo=array_mano[0].palo;
-
     int indice;
+
     for(int i=0;i<NUM_CARTAS_MANO;i++){
+
         indice=array_mano[i].numero;
+
         if(indice<10 && indice>1) return 0;//Si el valor de la carta no pertene a A,10,J,Q,K no es escalera real
+
         /*
         En este caso el manejo del indice varia en 2 casos:
         1. Indice = 1:   Ya que el AS es represanto con un 1, para acceder a su indice solamente debemos restarle 1.
         2. Indice >= 10: Para el resto de cartes (10,J,Q,K) para poder acceder a sus indices debemos restarles 9,
                         ya que en el array sus indices van del 1 al 4.          
         */
+
         if(indice==1)indice--;
         else indice=indice-9;
 
@@ -343,14 +407,21 @@ char c = getchar();
     C = Corazon
     D = Diamante
     T = Trebol
+
+    Estos del 2 al 10
+    11 = Jota
+    12 = Reina
+    13 = Rey
+    14 = As
 */
+
+//Se crean las 52 cartas combiando numero con tipo
 
 char tipoPalos[4] = {'B', 'C', 'D', 'T'};
 
 // Se crea el array que se encargara de manejar el mazo de cartas
 
 carta array_cartas[52];
-
 
 // Todas las asignan todos los valores de las cartas correspondientes a una baraja inglesa
 
@@ -366,17 +437,12 @@ for (int i = 0; i < NUM_PALOS; i++) {
 }
 
 
-//mostrar_mazo(array_cartas, NUM_CARTAS);
 
 // Se crea el un nuevo array tipo carta para tomar una mano del mazo
-
 carta cartas_mano[5];
-
-
 /* 
 
 Se instancian dos variables necesarias para contabilizar el progreso de el proceso
-
 division_porcentage = Contador que mide el porcentaje para sacar
 m_iteration_value = Contador que se encarga de medir el numero de iteracion de la muestra
 
@@ -387,12 +453,25 @@ int m_iteration_value = 1;
 long linear_count = 0;
 long max_value = M * N;
 
-// Se inicializa variable para contabilizar la cantidad de exitos
-
+// Se inicializa variable para contabilizar la cantidad de exitos (Frecuencias)
 int total_succeses = 0;
 int royal_flush_succeses = 0;
 int quad_succeses = 0;
 int double_pair_succeses = 0;
+
+int average_royal_flush_succeses = 0;
+int average_quad_succeses = 0;
+int average_double_pair_succeses = 0;
+
+
+float royal_flush_average = 0;
+float quad_average = 0;
+float double_pair_average = 0;
+
+//
+// Valores de mustras
+//int N = 10000;//determinarN();
+//int M = determinarM();
 
 
 for (int i = 0; i < M; i++){
@@ -405,23 +484,13 @@ for (int i = 0; i < M; i++){
 
         mezclar_mazo(array_cartas);
 
-
         for (int i = 0; i < NUM_CARTAS_MANO; i++) {
 
         // Se leen los primeros cinco valores del array de cartas y se toman como una mano
 
             cartas_mano[i] = array_cartas[i]; 
+
         }
-
-        /*
-        //Para realizar pruebas para verificar masos
-        cartas_mano[0].numero=1;
-        cartas_mano[1].numero=10;
-        cartas_mano[2].numero=11;
-        cartas_mano[3].numero=12;
-        cartas_mano[4].numero=13;
-        */
-
         // Al contador lineal se le asigna el numero de iteraciones totales hasta el momento
 
         linear_count = j + (m_iteration_value - 1) * N;
@@ -431,7 +500,6 @@ for (int i = 0; i < M; i++){
         if (linear_count == roundl( ((division_porcentage) / (float) 100 ) * (max_value) ) && division_porcentage <= 99)  {
 
             // Se incrementa el porcentaje que buscaremos para la proxima iteracion
-
             division_porcentage += 1;
 
             mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
@@ -439,16 +507,13 @@ for (int i = 0; i < M; i++){
             
 
         }
-
         if(validar_escalerareal(cartas_mano)){
             royal_flush_succeses +=1;
         }else {
-
             if(validar_poker(cartas_mano)){
                 quad_succeses += 1;
             }
             else{
-
                 if(validar_dospares(cartas_mano)){
                     double_pair_succeses += 1;
                 }
@@ -459,10 +524,26 @@ for (int i = 0; i < M; i++){
     // El valor de la iteracion de muestra es actualizado
 
     m_iteration_value += 1;
+
+    //Probabilidades empiricas de cada simulacion
+
+    royal_flush_average += (royal_flush_succeses / (float) N);
+    quad_average += (quad_succeses / (float) N);
+    double_pair_average += (double_pair_succeses / (float) N);
+    average_royal_flush_succeses = 0;
+    average_quad_succeses = 0;
+    average_double_pair_succeses = 0;
     
 }
 
 total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses;
+
+printf("\n\n");
+
+printf("La media de las probabilidades son las siguientes:\n\n");
+printf("[Empirica] Media P(Doble Par) = %f\n", royal_flush_average);
+printf("[Empirica] Media P(Quad) = %f\n", quad_average);
+printf("[Empirica] Media P(Royal Flush) = %f\n", double_pair_average);
 
 printf("\n\n");
 
