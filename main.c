@@ -23,8 +23,7 @@ Fecha de ultima modificación: 08/05/2021.
 #define NUM_PALOS 4
 //#define N 649739
 #define N 649739
-#define M 40
-
+#define M 70
 /*
 Se declara un nuevo tipo llamado carta, los atributos que pueden componener a este mismo estan definidos de la siguiente manera:
 
@@ -67,7 +66,23 @@ int CoeficienteBinomial(int n, int k)
 }
 
 
+int cmpfunc (const void * a, const void * b) {
 
+/*
+ * Funcion: Compara los numeros del tipo carta
+ * --------------------------------------------------
+ *  
+ *   a: puntero constante sin ningun tipo de dato asociado 
+ *   b: puntero constante sin ningun tipo de dato asociado 
+ *
+ *   Retorna: El resultado de la comparacion de los numeros entre dos cartas
+*/
+
+    carta *cartaA = (carta *)a;
+    carta *cartaB = (carta *)b;
+
+   return ( cartaB->numero - cartaA->numero );
+}
 
 void mostrar_mazo(carta array_cartas[], int n)
 
@@ -108,6 +123,22 @@ void mezclar_mazo(carta array_cartas[])
     }
 }
 
+
+void ordenar_mazo(carta array_cartas[]) 
+
+/*
+ * Rutina: Ordena las cartas tomando como clave el numero
+ * ---------------------------------------------------
+ *  
+ *   array_cartas[]: arreglo de tipo cartas
+ *
+*/
+{
+
+    qsort(array_cartas, NUM_CARTAS, sizeof(carta), cmpfunc);
+
+}
+
 void mostrar_informacion_general () {
 
 /*
@@ -120,23 +151,23 @@ void mostrar_informacion_general () {
 */
 
 printf("============================================================================================\n");
-printf("                             Instituto tecnologico de Costa Rica                            \n");
+printf("                             Instituto Tecnologico de Costa Rica                            \n");
 printf("============================================================================================\n\n");
 
 
 
 
 
-printf("  ____       _                               _           _     _ _ _ _   _           \n");
-printf(" |  _ \\ ___ | | _____ _ __   _ __  _ __ ___ | |__   __ _| |__ (_) (_) |_(_) ___  ___ \n");
-printf(" | |_) / _ \\| |/ / _ \\ '__| | '_ \\| '__/ _ \\| '_ \\ / _` | '_ \\| | | | __| |/ _ \\/ __|\n");
-printf(" |  __/ (_) |   <  __/ |    | |_) | | | (_) | |_) | (_| | |_) | | | | |_| |  __/\\__ \\\n");
-printf(" |_|   \\___/|_|\\_\\___|_|    | .__/|_|  \\___/|_.__/ \\__,_|_.__/|_|_|_|\\__|_|\\___||___/\n");
-printf("                            |_|                                                      \n\n");
+printf("   ____       _                               _           _     _ _ _ _   _           \n");
+printf("  |  _ \\ ___ | | _____ _ __   _ __  _ __ ___ | |__   __ _| |__ (_) (_) |_(_) ___  ___ \n");
+printf("  | |_) / _ \\| |/ / _ \\ '__| | '_ \\| '__/ _ \\| '_ \\ / _` | '_ \\| | | | __| |/ _ \\/ __|\n");
+printf("  |  __/ (_) |   <  __/ |    | |_) | | | (_) | |_) | (_| | |_) | | | | |_| |  __/\\__ \\\n");
+printf("  |_|   \\___/|_|\\_\\___|_|    | .__/|_|  \\___/|_.__/ \\__,_|_.__/|_|_|_|\\__|_|\\___||___/\n");
+printf("                             |_|                                                      \n\n");
 
 };
 
-void mostrar_barra_progreso(int contador_actual, int valor_maximo, int porcentage) {
+void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcentage) {
 /*
  * Rutina: Muestra el consola el progreso en relacion a el proceso que se este ejecutando
  * ---------------------------------------------------
@@ -297,7 +328,6 @@ printf("* Doble Par (Double Pair)\n");
 printf("* Cuatro iguales (Quad)\n");
 printf("* Full House\n");
 printf("* Escalera Real (Royal Flush)\n\n");
-
 printf("Sus probabilidades teoricas son:\n\n");
 
 calculate_theorical_probabilities();
@@ -354,7 +384,8 @@ m_iteration_value = Contador que se encarga de medir el numero de iteracion de l
 
 int division_porcentage = 1;
 int m_iteration_value = 1;
-int linear_count = 0;
+long linear_count = 0;
+long max_value = M * N;
 
 // Se inicializa variable para contabilizar la cantidad de exitos
 
@@ -365,6 +396,8 @@ int double_pair_succeses = 0;
 
 
 for (int i = 0; i < M; i++){
+
+    ordenar_mazo(array_cartas);
 
     for (int j = 0; j < N; j++) {
 
@@ -395,14 +428,15 @@ for (int i = 0; i < M; i++){
 
         // Condicionante que pregunta si el valor lineal ha llegado al porcentaje siguiente de las iteraciones totales
 
-        if (linear_count == round( ((division_porcentage) / (float) 100 ) * (M * N) ) )  {
+        if (linear_count == roundl( ((division_porcentage) / (float) 100 ) * (max_value) ) && division_porcentage <= 99)  {
 
             // Se incrementa el porcentaje que buscaremos para la proxima iteracion
 
             division_porcentage += 1;
-            
 
-            mostrar_barra_progreso((j + (m_iteration_value - 1) * N), M * N, division_porcentage);
+            mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
+
+            
 
         }
 
@@ -421,6 +455,7 @@ for (int i = 0; i < M; i++){
             }
         }
     }
+
     // El valor de la iteracion de muestra es actualizado
 
     m_iteration_value += 1;
@@ -432,10 +467,10 @@ total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses;
 printf("\n\n");
 
 printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
-printf("[Empirica] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
-printf("[Empirica] P(Quad) = %f\n", quad_succeses / (float) linear_count);
-printf("[Empirica] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
-printf("[Empirica] P(Total) = %f\n\n", total_succeses / (float) linear_count);
+printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
+printf("[EMPIRICA] P(Quad) = %f\n", quad_succeses / (float) linear_count);
+printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
+printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
 
 calculate_theorical_probabilities();
 
