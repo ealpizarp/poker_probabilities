@@ -24,7 +24,7 @@ Fecha de ultima modificación: 11/05/2021.
 #define NUM_PALOS 4
 
 #define N 649739
-#define M 10
+#define M 120
 
 
 
@@ -423,11 +423,6 @@ int validar_escalerareal(carta array_mano[]){
         if(array_mano[i].palo==tipo)contadores[indice]++;
         else return 0;//SI no es del mismo tipo del resto de cartas no es escalera real
     }
-  
-    //Valida que las 5 cartas sea diferente, es decir, que cada elemento del array tenga un valor de 1
-    for(int e=0;e<NUM_CARTAS_PALO;e++){
-        if(contadores[e]!=1) return 0;
-    }
     //Si sale del ciclo for significa que sí hay escalera real
     return 1;
 }
@@ -455,22 +450,21 @@ void calculate_theorical_probabilities(){
     printf("[TEORICA] P(Full House) = %f\n", pFullHouse);
     printf("[TEORICA] P(Quad) = %f\n", pQuad);
     printf("[TEORICA] P(Royal Flush) = %f\n", pRoyalFlush);
-    printf("[TEORICA] P(Total) = %f\n\n", pTotal);
+    printf("[TEORICA] P(Total) = %f\n", pTotal);
 
 }
 
 float calculate_variance(float probabilities[M], float average, float n){
 
-    double variance = 0.0f;
-    double sum = 0.0f;
+    float variance = 0;
+    float sum = 0;
 
-    for(int i=0; i<n; i++){
-        sum += pow(probabilities[i] - average, 2.0);
-        //sum += fabs(probabilities[i] - average);
-        //printf("%lf\n", fabs(probabilities[i] - average));
+    for(int i=0; i<M; i++){
+       sum += pow((probabilities[i] - average), 2); 
+       printf("%f", sum);
     }
 
-    variance = sum / (double)(n-1);
+    variance = sum / (n-1);
 
     return variance;
 }
@@ -634,7 +628,7 @@ int main () {
                 // Se incrementa el porcentaje que buscaremos para la proxima iteracion
 
                 division_porcentage += 1;
-                mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
+                //mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
 
                 
 
@@ -721,16 +715,16 @@ int main () {
 
     // Se calcula la varianza
 
-    double_pair_variance = calculate_variance(double_pair_probabilities, double_pair_average, M);
-    quad_variance = calculate_variance(quad_probabilities, quad_average, M);
-    full_house_variance = calculate_variance(full_house_probabilities, full_house_average, M);
-    royal_flush_variance = calculate_variance(royal_flush_probabilities, royal_flush_average, M);
+    double_pair_variance = calculate_variance(double_pair_probabilities, double_pair_average, N);
+    quad_variance = calculate_variance(quad_probabilities, quad_average, N);
+    full_house_variance = calculate_variance(full_house_probabilities, full_house_average, N);
+    royal_flush_variance = calculate_variance(royal_flush_probabilities, royal_flush_average, N);
 
     printf("La varianza de las probabilidades resultantes en cada simulacion es:\n\n");
-    printf("[EMPIRICA] Varianza (Doble Par) = %lf\n", double_pair_variance);
-    printf("[EMPIRICA] Varianza (Quad) = %lf\n", quad_variance);
-    printf("[EMPIRICA] Varianza (Full House) = %lf\n", full_house_variance);
-    printf("[EMPIRICA] Varianza (Royal Flush) = %lf\n\n", royal_flush_variance);
+    printf("[EMPIRICA] Varianza (Doble Par) = %f\n", double_pair_variance);
+    printf("[EMPIRICA] Varianza (Quad) = %f\n", quad_variance);
+    printf("[EMPIRICA] Varianza (Full House) = %f\n", full_house_variance);
+    printf("[EMPIRICA] Varianza (Royal Flush) = %f\n\n", royal_flush_variance);
 
     // Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
 
@@ -744,19 +738,6 @@ int main () {
     // Se muestran las probabilides teoricas
 
     calculate_theorical_probabilities();
-
-    // Se calcula el error entre probabilidad teorica y media
-    
-    float royal_flush_theorical = CoeficienteBinomial(4,1) / (float) CoeficienteBinomial(52,5);
-    double double_theorical = (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) / (float) CoeficienteBinomial(52, 5);
-    double full_house_theorical = (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) / (float) CoeficienteBinomial(52, 5);
-    float quad_theorical = (13 * 12 * 4) / (float) CoeficienteBinomial(52, 5);
-
-    printf("El margen de error de la media con respecto a la probabilidad teorica:\n\n");
-    printf("Doble Par = %f\n", fabs(double_theorical - double_pair_average));
-    printf("Quad = %f\n", fabs(quad_theorical - quad_average));
-    printf("Full House = %f\n", fabs(full_house_theorical - full_house_average));
-    printf("Royal Flush = %f\n", fabs(royal_flush_theorical - royal_flush_average));
 
     return 0;
 
