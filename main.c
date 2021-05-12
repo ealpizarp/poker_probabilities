@@ -423,6 +423,11 @@ int validar_escalerareal(carta array_mano[]){
         if(array_mano[i].palo==tipo)contadores[indice]++;
         else return 0;//SI no es del mismo tipo del resto de cartas no es escalera real
     }
+  
+    //Valida que las 5 cartas sea diferente, es decir, que cada elemento del array tenga un valor de 1
+    for(int e=0;e<NUM_CARTAS_PALO;e++){
+        if(contadores[e]!=1) return 0;
+    }
     //Si sale del ciclo for significa que sí hay escalera real
     return 1;
 }
