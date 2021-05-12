@@ -431,256 +431,329 @@ int validar_escalerareal(carta array_mano[]){
 
 void calculate_theorical_probabilities(){
 
-/*
- * Rutina: Calcula e imprime las probabilidades teoricas de cada mano
- * --------------------------------------------------
- *  
- * Calcula las probabilidades teoricas siguiendo los resultados de una analisis del
- * espacio muestral previamente hecho y utiliza coeficientes binomiales para calcularlo
- *
-*/
+    /*
+     * Rutina: Calcula e imprime las probabilidades teoricas de cada mano
+     * --------------------------------------------------
+     *  
+     * Calcula las probabilidades teoricas siguiendo los resultados de una analisis del
+     * espacio muestral previamente hecho y utiliza coeficientes binomiales para calcularlo
+     *
+    */
 
-float pRoyalFlush = CoeficienteBinomial(4,1) / (float) CoeficienteBinomial(52,5);
-double pDosPares = (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) / (float) CoeficienteBinomial(52, 5);
-double pFullHouse = (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) / (float) CoeficienteBinomial(52, 5);
-float pQuad = (13 * 12 * 4) / (float) CoeficienteBinomial(52, 5);
-float pTotal = pRoyalFlush + pDosPares + pFullHouse + pFullHouse + pQuad;
+    float pRoyalFlush = CoeficienteBinomial(4,1) / (float) CoeficienteBinomial(52,5);
+    double pDosPares = (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) / (float) CoeficienteBinomial(52, 5);
+    double pFullHouse = (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) / (float) CoeficienteBinomial(52, 5);
+    float pQuad = (13 * 12 * 4) / (float) CoeficienteBinomial(52, 5);
+    float pTotal = pRoyalFlush + pDosPares + pFullHouse + pFullHouse + pQuad;
 
-printf("[TEORICA] P(Doble Par) = %f\n", pDosPares);
-printf("[TEORICA] P(Full House) = %f\n", pFullHouse);
-printf("[TEORICA] P(Quad) = %f\n", pQuad);
-printf("[TEORICA] P(Royal Flush) = %f\n", pRoyalFlush);
-printf("[TEORICA] P(Total) = %f\n", pTotal);
+    printf("[TEORICA] P(Doble Par) = %f\n", pDosPares);
+    printf("[TEORICA] P(Full House) = %f\n", pFullHouse);
+    printf("[TEORICA] P(Quad) = %f\n", pQuad);
+    printf("[TEORICA] P(Royal Flush) = %f\n", pRoyalFlush);
+    printf("[TEORICA] P(Total) = %f\n", pTotal);
 
+}
+
+float calculate_variance(float probabilities[M], float average, float n){
+
+    double variance = 0.0f;
+    double sum = 0.0f;
+
+    for(int i=0; i<n; i++){
+        sum += pow(probabilities[i] - average, 2.0);
+        //sum += fabs(probabilities[i] - average);
+        //printf("%lf\n", fabs(probabilities[i] - average));
+    }
+
+    variance = sum / (double)(n-1);
+
+    return variance;
 }
 
 
 int main () {
 
-srand(time(NULL));
+    srand(time(NULL));
 
-/* 
-    Se calculan las probabilidades de cada uno de los eventos haciendo un conteo de casos que verifican el el evento conjunto
-    con el total de casos de un evento, para luego aplicar LaPlace. Esto lo hacemos con el uso de coeficientes binomiales.
-*/
-mostrar_informacion_general();
+    /* 
+        Se calculan las probabilidades de cada uno de los eventos haciendo un conteo de casos que verifican el el evento conjunto
+        con el total de casos de un evento, para luego aplicar LaPlace. Esto lo hacemos con el uso de coeficientes binomiales.
+    */
+    mostrar_informacion_general();
 
-printf("Las manos que analizaremos en ese programa son las siguientes:\n\n");
-printf("* Doble Par (Double Pair)\n");
-printf("* Cuatro iguales (Quad)\n");
-printf("* Full House\n");
-printf("* Escalera Real (Royal Flush)\n\n");
-printf("Sus probabilidades teoricas son:\n\n");
+    printf("Las manos que analizaremos en ese programa son las siguientes:\n\n");
+    printf("* Doble Par (Double Pair)\n");
+    printf("* Cuatro iguales (Quad)\n");
+    printf("* Full House\n");
+    printf("* Escalera Real (Royal Flush)\n\n");
+    printf("Sus probabilidades teoricas son:\n\n");
 
-calculate_theorical_probabilities();
+    calculate_theorical_probabilities();
 
-printf("\nPresione ENTER para continuar con las pruebas empiricas");
-char c = getchar();
+    printf("\nPresione ENTER para continuar con las pruebas empiricas");
+    char c = getchar();
 
-/*
-    Se crea un array constante que contiene los caracteres para representar cada palo, estos
-    están definidos de la siguiente manera:
+    /*
+        Se crea un array constante que contiene los caracteres para representar cada palo, estos
+        están definidos de la siguiente manera:
 
-    B = Bastos
-    C = Corazon
-    D = Diamante
-    T = Trebol
+        B = Bastos
+        C = Corazon
+        D = Diamante
+        T = Trebol
 
-*/
+    */
 
-//Se crean las 52 cartas combiando numero con tipo
+    //Se crean las 52 cartas combiando numero con tipo
 
-char tipoPalos[4] = {'B', 'C', 'D', 'T'};
+    char tipoPalos[4] = {'B', 'C', 'D', 'T'};
 
-// Se crea el array que se encargara de manejar el mazo de cartas
+    // Se crea el array que se encargara de manejar el mazo de cartas
 
-carta array_cartas[52];
+    carta array_cartas[52];
 
-// Todas las asignan todos los valores de las cartas correspondientes a una baraja inglesa
+    // Todas las asignan todos los valores de las cartas correspondientes a una baraja inglesa
 
-int pos = 0;
-for (int i = 0; i < NUM_PALOS; i++) {
-    
-    for(int j = 1; j <= NUM_CARTAS_PALO; j++) {
+    int pos = 0;
+    for (int i = 0; i < NUM_PALOS; i++) {
+        
+        for(int j = 1; j <= NUM_CARTAS_PALO; j++) {
 
-        array_cartas[pos].palo = tipoPalos[i];
-        array_cartas[pos].numero = j;
-        pos += 1;
+            array_cartas[pos].palo = tipoPalos[i];
+            array_cartas[pos].numero = j;
+            pos += 1;
+        }
     }
-}
 
-// Se crea el un nuevo array tipo carta para tomar una mano del mazo
+    // Se crea el un nuevo array tipo carta para tomar una mano del mazo
 
-carta cartas_mano[5];
-
-
-/* 
-
-Se instancian dos variables necesarias para contabilizar el progreso de el proceso
-
-division_porcentage = Contador que mide el porcentaje para sacar
-m_iteration_value = Contador que se encarga de medir el numero de iteracion de la muestra
-
-*/
-
-int division_porcentage = 1;
-int m_iteration_value = 1;
-long linear_count = 0;
-long max_value = M * N;
-
-// Se inicializa variable para contabilizar la cantidad de exitos (Frecuencias)
-
-int total_succeses = 0;
-int royal_flush_succeses = 0;
-int quad_succeses = 0;
-int double_pair_succeses = 0;
-int full_house_succeses = 0;
-
-// Variables para contabilizar los exitos por cada simulacion son inicializadas
-
-int average_royal_flush_succeses = 0;
-int average_quad_succeses = 0;
-int average_double_pair_succeses = 0;
-float average_full_house_succeses = 0;
+    carta cartas_mano[5];
 
 
-// Se inicializan las variables para contabilizar la media de probabilidades
+    /* 
 
-float royal_flush_average = 0;
-float quad_average = 0;
-float double_pair_average = 0;
-float full_house_average = 0;
+    Se instancian dos variables necesarias para contabilizar el progreso de el proceso
 
+    division_porcentage = Contador que mide el porcentaje para sacar
+    m_iteration_value = Contador que se encarga de medir el numero de iteracion de la muestra
 
+    */
 
-// Valores de mustras
+    int division_porcentage = 1;
+    int m_iteration_value = 1;
+    long linear_count = 0;
+    long max_value = M * N;
 
-//int M = determinarM();
+    // Se inicializa variable para contabilizar la cantidad de exitos (Frecuencias)
 
+    int total_succeses = 0;
+    int royal_flush_succeses = 0;
+    int quad_succeses = 0;
+    int double_pair_succeses = 0;
+    int full_house_succeses = 0;
 
-for (int i = 0; i < M; i++){
+    // Variables para contabilizar los exitos por cada simulacion son inicializadas
 
-
-    // El mazo se ordena cada vez que se va a tomar una nueva muestra
-
-    ordenar_mazo(array_cartas);
-
-
-    for (int j = 0; j < N; j++) {
-
-        // Se mezcla el mazo para cada vez que se saca una mano
-
-        mezclar_mazo(array_cartas);
-
-
-        for (int i = 0; i < NUM_CARTAS_MANO; i++) {
-
-        // Se leen los primeros cinco valores del array de cartas y se toman como una mano
-
-            cartas_mano[i] = array_cartas[i]; 
-
-        }
+    int average_royal_flush_succeses = 0;
+    int average_quad_succeses = 0;
+    int average_double_pair_succeses = 0;
+    float average_full_house_succeses = 0;
 
 
-        // Al contador lineal se le asigna el numero de iteraciones totales hasta el momento
+    // Se inicializan las variables para contabilizar la suma de probabilidades
 
-        linear_count = j + (m_iteration_value - 1) * N;
+    float royal_flush_sum = 0;
+    float quad_sum = 0;
+    float double_pair_sum = 0;
+    float full_house_sum = 0;
 
-        // Condicionante que pregunta si el valor lineal ha llegado al porcentaje siguiente de las iteraciones totales
+    // Se inicializan las variables para contabilizar la media de las probabilidades
+
+    float royal_flush_average = 0;
+    float quad_average = 0;
+    float double_pair_average = 0;
+    float full_house_average = 0;
+
+    // Se inicializan variables para almacenar la varianza
+
+    float royal_flush_variance = 0;
+    float quad_variance = 0;
+    float double_pair_variance = 0;
+    float full_house_variance = 0;
+
+    // Variables para almacenar las probabilidades por cada simulacion
+
+    float royal_flush_probabilities[M];
+    float quad_probabilities[M];
+    float double_pair_probabilities[M];
+    float full_house_probabilities[M];
+    // Valores de mustras
+
+    //int M = determinarM();
 
 
-
-        if (linear_count == roundl( ((division_porcentage) / (float) 100 ) * (max_value) ) && division_porcentage <= 99)  {
-
-            // Se incrementa el porcentaje que buscaremos para la proxima iteracion
-
-            division_porcentage += 1;
-            mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
-
-            
-
-        }
+    for (int i = 0; i < M; i++){
 
 
-        // Se valida si la escalera cumple con algunos de los eventos que buscamos
+        // El mazo se ordena cada vez que se va a tomar una nueva muestra
+
+        ordenar_mazo(array_cartas);
 
 
-        if(validar_escalerareal(cartas_mano)){
+        for (int j = 0; j < N; j++) {
 
-            royal_flush_succeses +=1;
-            average_royal_flush_succeses += 1;
+            // Se mezcla el mazo para cada vez que se saca una mano
 
-        }else {
+            mezclar_mazo(array_cartas);
 
-            if(validar_poker(cartas_mano)){
 
-                quad_succeses += 1;
-                average_quad_succeses +=1;
+            for (int i = 0; i < NUM_CARTAS_MANO; i++) {
 
-            }else{
+            // Se leen los primeros cinco valores del array de cartas y se toman como una mano
 
-                if(validar_fullhouse(cartas_mano)){
-
-                    full_house_succeses += 1;
-                    average_full_house_succeses += 1;
-
-                } else{
-
-                    if(validar_dospares(cartas_mano)){
-                        double_pair_succeses += 1;
-                        average_double_pair_succeses += 1;
-
-                    }
-                }
+                cartas_mano[i] = array_cartas[i]; 
 
             }
+
+
+            // Al contador lineal se le asigna el numero de iteraciones totales hasta el momento
+
+            linear_count = j + (m_iteration_value - 1) * N;
+
+            // Condicionante que pregunta si el valor lineal ha llegado al porcentaje siguiente de las iteraciones totales
+
+
+
+            if (linear_count == roundl( ((division_porcentage) / (float) 100 ) * (max_value) ) && division_porcentage <= 99)  {
+
+                // Se incrementa el porcentaje que buscaremos para la proxima iteracion
+
+                division_porcentage += 1;
+                mostrar_barra_progreso((j + (m_iteration_value - 1) * N), max_value, division_porcentage);
+
+                
+
+            }
+
+// Se valida si la escalera cumple con algunos de los eventos que buscamos
+
+
+            if(validar_escalerareal(cartas_mano)){
+
+                royal_flush_succeses +=1;
+                average_royal_flush_succeses += 1;
+
+            }else {
+
+                if(validar_poker(cartas_mano)){
+
+                    quad_succeses += 1;
+                    average_quad_succeses +=1;
+
+                }else{
+
+                    if(validar_fullhouse(cartas_mano)){ 
+                        full_house_succeses += 1;
+                        average_full_house_succeses += 1;
+
+                    } else{
+
+                        if(validar_dospares(cartas_mano)){
+                            double_pair_succeses += 1;
+                            average_double_pair_succeses += 1;
+
+                        }
+                    }
+
+                }
+            }
         }
+
+        // El valor de la iteracion de muestra es actualizado
+
+        m_iteration_value += 1;
+
+        //Almaceno las probabilidades obtenidas en la simulacion
+       
+        royal_flush_probabilities[i] = (average_royal_flush_succeses / (float) N);
+        quad_probabilities[i] = (average_quad_succeses / (float) N);
+        double_pair_probabilities[i] = (average_double_pair_succeses / (float) N);
+        full_house_probabilities[i] = (average_full_house_succeses / (float) N);
+
+        //Sumatoria de las probabilidades obtenidas para calcular la media
+
+        royal_flush_sum += royal_flush_probabilities[i];
+        quad_sum += quad_probabilities[i];
+        double_pair_sum += double_pair_probabilities[i];
+        full_house_sum += full_house_probabilities[i];
+
+        // Las variables que contabilizan los exitos por cada simulacion son reiniciadas 
+
+        average_royal_flush_succeses = 0;
+        average_quad_succeses = 0;
+        average_double_pair_succeses = 0;
+        average_full_house_succeses = 0;
+        
     }
 
-    // El valor de la iteracion de muestra es actualizado
 
-    m_iteration_value += 1;
+    total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses + full_house_succeses;
 
-    //Probabilidades empiricas de cada simulacion
+    printf("\n\n");
 
-    royal_flush_average += (average_royal_flush_succeses / (float) N);
-    quad_average += (average_quad_succeses / (float) N);
-    double_pair_average += (average_double_pair_succeses / (float) N);
-    full_house_average += (average_full_house_succeses / (float) N);
+    // Se calcula la media
 
+    double_pair_average = double_pair_sum / (float) M;
+    quad_average = quad_sum / (float) M;
+    full_house_average = full_house_sum / (float) M;
+    royal_flush_average = royal_flush_sum / (float) M;
 
-    // Las variables que contabilizan los exitos por cada simulacion son reiniciadas 
+    printf("La media de las probabilidades resultantes en cada simulacion es:\n\n");
+    printf("[EMPIRICA] Media P(Doble Par) = %f\n", double_pair_average);
+    printf("[EMPIRICA] Media P(Quad) = %f\n", quad_average);
+    printf("[EMPIRICA] Media P(Full House) = %f\n", full_house_average);
+    printf("[EMPIRICA] Media P(Royal Flush) = %f\n\n", royal_flush_average);
 
-    average_royal_flush_succeses = 0;
-    average_quad_succeses = 0;
-    average_double_pair_succeses = 0;
-    average_full_house_succeses = 0;
+    // Se calcula la varianza
+
+    double_pair_variance = calculate_variance(double_pair_probabilities, double_pair_average, M);
+    quad_variance = calculate_variance(quad_probabilities, quad_average, M);
+    full_house_variance = calculate_variance(full_house_probabilities, full_house_average, M);
+    royal_flush_variance = calculate_variance(royal_flush_probabilities, royal_flush_average, M);
+
+    printf("La varianza de las probabilidades resultantes en cada simulacion es:\n\n");
+    printf("[EMPIRICA] Varianza (Doble Par) = %lf\n", double_pair_variance);
+    printf("[EMPIRICA] Varianza (Quad) = %lf\n", quad_variance);
+    printf("[EMPIRICA] Varianza (Full House) = %lf\n", full_house_variance);
+    printf("[EMPIRICA] Varianza (Royal Flush) = %lf\n\n", royal_flush_variance);
+
+    // Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
+
+    printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
+    printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Quad) = %f\n", quad_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Full House) = %f\n", full_house_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
+
+    // Se muestran las probabilides teoricas
+
+    calculate_theorical_probabilities();
+
+    // Se calcula el error entre probabilidad teorica y media
     
-}
+    float royal_flush_theorical = CoeficienteBinomial(4,1) / (float) CoeficienteBinomial(52,5);
+    double double_theorical = (CoeficienteBinomial(13, 2) * pow(CoeficienteBinomial(4,2), 2) * 11 * 4 ) / (float) CoeficienteBinomial(52, 5);
+    double full_house_theorical = (CoeficienteBinomial(13, 1) * CoeficienteBinomial(4, 3) * 12 * CoeficienteBinomial(4,2)) / (float) CoeficienteBinomial(52, 5);
+    float quad_theorical = (13 * 12 * 4) / (float) CoeficienteBinomial(52, 5);
 
-// Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
+    printf("El margen de error de la media con respecto a la probabilidad teorica:\n\n");
+    printf("Doble Par = %f\n", fabs(double_theorical - double_pair_average));
+    printf("Quad = %f\n", fabs(quad_theorical - quad_average));
+    printf("Full House = %f\n", fabs(full_house_theorical - full_house_average));
+    printf("Royal Flush = %f\n", fabs(royal_flush_theorical - royal_flush_average));
 
-total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses + full_house_succeses;
-
-printf("\n\n");
-
-printf("La media de las probabilidades resultantes en cada simulacion es:\n\n");
-printf("[EMPIRICA] Media P(Doble Par) = %f\n", double_pair_average / (float) M);
-printf("[EMPIRICA] Media P(Quad) = %f\n", quad_average / (float) M);
-printf("[EMPIRICA] Media P(Full House) = %f\n", full_house_average / (float) M);
-printf("[EMPIRICA] Media P(Royal Flush) = %f\n\n", royal_flush_average / (float) M);
-
-
-printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
-printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
-printf("[EMPIRICA] P(Quad) = %f\n", quad_succeses / (float) linear_count);
-printf("[EMPIRICA] P(Full House) = %f\n", full_house_succeses / (float) linear_count);
-printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
-printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
-
-calculate_theorical_probabilities();
-
-return 0;
+    return 0;
 
 }
 
