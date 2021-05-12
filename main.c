@@ -24,7 +24,7 @@ Fecha de ultima modificación: 11/05/2021.
 #define NUM_PALOS 4
 
 #define N 649739
-#define M 120
+#define M 10
 
 
 
@@ -450,7 +450,7 @@ void calculate_theorical_probabilities(){
     printf("[TEORICA] P(Full House) = %f\n", pFullHouse);
     printf("[TEORICA] P(Quad) = %f\n", pQuad);
     printf("[TEORICA] P(Royal Flush) = %f\n", pRoyalFlush);
-    printf("[TEORICA] P(Total) = %f\n", pTotal);
+    printf("[TEORICA] P(Total) = %f\n\n", pTotal);
 
 }
 
