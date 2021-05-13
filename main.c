@@ -70,6 +70,7 @@ int CoeficienteBinomial(int n, int k)
 }
 
 
+
 int cmpfunc (const void * a, const void * b) {
 
 /*
@@ -90,6 +91,7 @@ int cmpfunc (const void * a, const void * b) {
 
 
 
+
 int determinarM()
 /*
  * Funcion: Determina el valor estadístico de m
@@ -107,6 +109,7 @@ int determinarM()
     return n;
 
 }
+
 
 
 
@@ -131,12 +134,10 @@ int determinarN()
     int mayor = 0;
 
 
-    Nmuestra[1] = NRoyalFlush;
-    Nmuestra[2] = NDosPares;
-    Nmuestra[3] = NFullHouse;
-    Nmuestra[4] = NQuad;
-
-
+    Nmuestra[0] = NRoyalFlush;
+    Nmuestra[1] = NDosPares;
+    Nmuestra[2] = NFullHouse;
+    Nmuestra[3] = NQuad;
 
     for(int i=1; i <= 4; i++){
         if(Nmuestra[i]>mayor){
@@ -146,6 +147,7 @@ int determinarN()
     return mayor;
 
 }
+
 
 
 
@@ -164,6 +166,8 @@ void mostrar_mazo(carta array_cartas[], int n)
     for(int i=0; i < n; i++)
         printf("Carta %c\t%d\n", array_cartas[i].palo, array_cartas[i].numero);
 }
+
+
 
 
 
@@ -191,6 +195,8 @@ void mezclar_mazo(carta array_cartas[])
 
 
 
+
+
 void ordenar_mazo(carta array_cartas[]) 
 
 /*
@@ -206,6 +212,10 @@ void ordenar_mazo(carta array_cartas[])
     qsort(array_cartas, NUM_CARTAS, sizeof(carta), cmpfunc);
 
 }
+
+
+
+
 
 void mostrar_informacion_general () {
 
@@ -234,6 +244,11 @@ printf("  |_|   \\___/|_|\\_\\___|_|    | .__/|_|  \\___/|_.__/ \\__,_|_.__/|_|_
 printf("                             |_|                                                      \n\n");
 
 };
+
+
+
+
+
 
 void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcentage) {
 /*
@@ -267,6 +282,11 @@ void mostrar_barra_progreso(int contador_actual, long valor_maximo, int porcenta
     fflush(stdout);
 
 }
+
+
+
+
+
 
 int validar_fullhouse(carta array_mano[]){
 
@@ -312,6 +332,12 @@ int validar_fullhouse(carta array_mano[]){
     else return 0;
 }
 
+
+
+
+
+
+
 int validar_dospares(carta array_mano[]){
 
     /*  Para validar 2 pares usamos la lógica para vadilar full house:
@@ -354,6 +380,7 @@ int validar_dospares(carta array_mano[]){
 
 
 
+
 int validar_poker(carta array_mano[]){
 
     /*  Para validar 2 pares usamos la lógica para vadilar full house:
@@ -385,6 +412,8 @@ int validar_poker(carta array_mano[]){
     //Si sale del ciclo for significa que no hay un poker
     return 0;
 }
+
+
 
 
 
@@ -434,6 +463,9 @@ int validar_escalerareal(carta array_mano[]){
 
 
 
+
+
+
 void calculate_theorical_probabilities(){
 
     /*
@@ -459,6 +491,12 @@ void calculate_theorical_probabilities(){
 
 }
 
+
+
+
+
+
+
 double calculate_variance(float probabilities[M], float average, float n){
 
     double variance = 0.0f;
@@ -474,6 +512,10 @@ double calculate_variance(float probabilities[M], float average, float n){
 
     return variance;
 }
+
+
+
+
 
 
 int main () {
@@ -592,10 +634,9 @@ int main () {
     float quad_probabilities[M];
     float double_pair_probabilities[M];
     float full_house_probabilities[M];
-    // Valores de mustras
 
-    //int M = determinarM();
 
+    // Se hacen M simulaciones de N manos
 
     for (int i = 0; i < M; i++){
 
@@ -673,6 +714,7 @@ int main () {
                 }
             }
         }
+        
 
         // El valor de la iteracion de muestra es actualizado
 
@@ -705,6 +747,19 @@ int main () {
     total_succeses = double_pair_succeses + quad_succeses + royal_flush_succeses + full_house_succeses;
 
     printf("\n\n");
+
+    // Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
+
+    printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
+    printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Quad) = %f\n", quad_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Full House) = %f\n", full_house_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
+    printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
+
+    // Se muestran las probabilides teoricas
+
+    calculate_theorical_probabilities();
 
     // Se calcula la media
 
@@ -739,18 +794,6 @@ int main () {
     printf("[EMPIRICA] Varianza (Full House) = %0.18f\n", full_house_variance);
     printf("[EMPIRICA] Varianza (Royal Flush) = %0.18f\n\n", royal_flush_variance);
 
-    // Se calcula la probabilidad de que ocurra cualquier de los cutro eventos
-
-    printf("Las probabilidades empiricas y teoricas son las siguientes:\n\n");
-    printf("[EMPIRICA] P(Doble Par) = %f\n", double_pair_succeses / (float) linear_count);
-    printf("[EMPIRICA] P(Quad) = %f\n", quad_succeses / (float) linear_count);
-    printf("[EMPIRICA] P(Full House) = %f\n", full_house_succeses / (float) linear_count);
-    printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
-    printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
-
-    // Se muestran las probabilides teoricas
-
-    calculate_theorical_probabilities();
 
     // Se calcula el error entre probabilidad teorica y media
     
