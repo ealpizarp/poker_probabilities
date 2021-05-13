@@ -243,12 +243,6 @@ printf("  |  __/ (_) |   <  __/ |    | |_) | | | (_) | |_) | (_| | |_) | | | | |
 printf("  |_|   \\___/|_|\\_\\___|_|    | .__/|_|  \\___/|_.__/ \\__,_|_.__/|_|_|_|\\__|_|\\___||___/\n");
 printf("                             |_|                                                      \n\n");
 
-printf(" Las manos de póker que se analizarán cen ese programa son las siguientes:\n\n");
-printf("* Doble Par (Double Pair)\n");
-printf("* Cuatro iguales (Quad)\n");
-printf("* Full House\n");
-printf("* Escalera Real (Royal Flush)\n\n");
-printf("Sus probabilidades teoricas son:\n\n");
 
 };
 
@@ -533,7 +527,17 @@ int main () {
     */
     mostrar_informacion_general();
 
+    printf(" Las manos de póker que se analizarán cen ese programa son las siguientes:\n\n");
+
+    printf("* Doble Par (Double Pair)\n");
+    printf("* Cuatro iguales (Quad)\n");
+    printf("* Full House\n");
+    printf("* Escalera Real (Royal Flush)\n\n");
+    printf("Sus probabilidades teoricas son:\n\n");
+
     calculate_theorical_probabilities();
+
+
 
     printf("\nPresione ENTER para continuar con las pruebas empiricas");
     char c = getchar();
@@ -745,9 +749,8 @@ int main () {
 
     printf("\n\n");
 
-    // Se muestran las probabilides teoricas
 
-    calculate_theorical_probabilities();
+
 
     // Se calcula la media
     double_pair_average = double_pair_sum / (float) M;
@@ -775,6 +778,10 @@ int main () {
     printf("[EMPIRICA] P(Full House) = %f\n", full_house_succeses / (float) linear_count);
     printf("[EMPIRICA] P(Royal Flush) = %f\n", royal_flush_succeses / (float) linear_count);
     printf("[EMPIRICA] P(Total) = %f\n\n", total_succeses / (float) linear_count);
+
+    // Se muestran las probabilides teoricas
+
+    calculate_theorical_probabilities();
 
     printf("La media de las probabilidades resultantes en cada simulacion y la probabilidad empirica es:\n\n");
     printf("[EMPIRICA] Media (Doble Par) = %0.18f\n", double_pair_average);
